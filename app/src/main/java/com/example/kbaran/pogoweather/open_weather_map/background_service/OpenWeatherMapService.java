@@ -1,4 +1,4 @@
-package com.example.kbaran.pogoweather.open_weather_map;
+package com.example.kbaran.pogoweather.open_weather_map.background_service;
 
 import android.app.Service;
 import android.content.Intent;
@@ -8,6 +8,12 @@ import android.os.IBinder;
 import android.util.Log;
 
 import com.example.kbaran.pogoweather.MainActivity;
+import com.example.kbaran.pogoweather.http_connection.GenericHttpConnectionHandler;
+import com.example.kbaran.pogoweather.open_weather_map.connection_info.OpenWeatherMapHttpConnectionInfoImpl;
+import com.example.kbaran.pogoweather.open_weather_map.fetcher.OpenWeatherMapFetcherImpl;
+import com.example.kbaran.pogoweather.open_weather_map.url_provider.OpenWeatherMapUrlProviderImpl;
+
+import org.json.JSONObject;
 
 import java.io.IOException;
 import java.util.Timer;
@@ -19,14 +25,14 @@ public class OpenWeatherMapService extends Service {
     public static final int THREE_HOURS_IN_MILLISECONDS = 10800000;
     public static final int PERIOD = THREE_HOURS_IN_MILLISECONDS;
 
-    private OpenWeatherMapFetcher openWeatherMapFetcher;
+    private OpenWeatherMapFetcherImpl openWeatherMapFetcher;
 
     public OpenWeatherMapService() {
     }
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        startTimerTask();
+
         return super.onStartCommand(intent, flags, startId);
 
     }
@@ -34,7 +40,13 @@ public class OpenWeatherMapService extends Service {
     @Override
     public void onCreate() {
         super.onCreate();
-        openWeatherMapFetcher = new OpenWeatherMapFetcher();
+        openWeatherMapFetcher = new OpenWeatherMapFetcherImpl(
+                new GenericHttpConnectionHandler(),
+                new OpenWeatherMapUrlProviderImpl(
+                        new OpenWeatherMapHttpConnectionInfoImpl()
+                )
+        );
+        startTimerTask();
     }
 
     @Override
@@ -52,8 +64,7 @@ public class OpenWeatherMapService extends Service {
                 handler.post(new Runnable() {
                     @Override
                     public void run() {
-                      new FetchDataTask().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR,null);
-
+                      new FetchDataAsyncTask(openWeatherMapFetcher).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR,null);
                     }
                 });
             }
@@ -124,29 +135,22 @@ public class OpenWeatherMapService extends Service {
         timer.scheduleAtFixedRate(fetchTimerTask, 0, PERIOD);
     }
 */
-    private long cityId;
+    /*
     private class FetchDataTask extends AsyncTask<Void,Void,Void>
     {
 
         @Override
         protected Void doInBackground(Void... params) {
-            String result = null;
-
-            try {
-                result = openWeatherMapFetcher.getWeatherForCityByCityId(2648110);
-                Log.i(this.getClass().getName(),"Fetched data: " + result);
-                result = openWeatherMapFetcher.getWheatherForCityByCityName("Greater London","GB");
-                Log.i(this.getClass().getName(),"Fetched data: " + result);
-                result = openWeatherMapFetcher.getWeatherForCityByCoordinates("-0.16667","51.5");
-                Log.i(this.getClass().getName(),"Fetched data: " + result);
-
-            } catch (IOException e) {
-                Log.e(MainActivity.class.getName(),"IO exception why fetching the data", e);
-                e.printStackTrace();
-            }
-
+            JSONObject result = null;
+            result = openWeatherMapFetcher.getWeatherByLocationId(2648110);
+            Log.i(this.getClass().getName(),"Fetched data: " + result);
+            result = openWeatherMapFetcher.getWeatherByLocationName("Greater London","GB");
+            Log.i(this.getClass().getName(),"Fetched data: " + result);
+            result = openWeatherMapFetcher.getWeatherByLocationCoordinates(-0.16667,51.5);
+            Log.i(this.getClass().getName(),"Fetched data: " + result);
             return null;
         }
     }
+    */
 
 }

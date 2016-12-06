@@ -7,12 +7,8 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
 
-import com.example.kbaran.pogoweather.open_weather_map.OpenWeatherMapFetcher;
-import com.example.kbaran.pogoweather.open_weather_map.OpenWeatherMapService;
-
-import java.io.IOException;
+import com.example.kbaran.pogoweather.open_weather_map.background_service.OpenWeatherMapService;
 
 public class MainActivity extends AppCompatActivity {
 

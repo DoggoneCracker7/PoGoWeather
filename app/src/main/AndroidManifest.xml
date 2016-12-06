@@ -19,7 +19,7 @@
         </activity>
 
         <service
-            android:name=".open_weather_map.OpenWeatherMapService"
+            android:name=".open_weather_map.background_service.OpenWeatherMapService"
             android:enabled="true"
             android:exported="true"></service>
     </application>
