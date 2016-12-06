@@ -27,8 +27,6 @@ public class OpenWeatherMapService extends Service {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         startTimerTask();
-        //startTimerTask2();
-      //  startTimerTask3();
         return super.onStartCommand(intent, flags, startId);
 
     }
@@ -126,6 +124,7 @@ public class OpenWeatherMapService extends Service {
         timer.scheduleAtFixedRate(fetchTimerTask, 0, PERIOD);
     }
 */
+    private long cityId;
     private class FetchDataTask extends AsyncTask<Void,Void,Void>
     {
 
