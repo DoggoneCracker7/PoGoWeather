@@ -64,93 +64,12 @@ public class OpenWeatherMapService extends Service {
                 handler.post(new Runnable() {
                     @Override
                     public void run() {
-                      new FetchDataAsyncTask(openWeatherMapFetcher).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR,null);
+                      new FetchWeatherDataAsyncTask(openWeatherMapFetcher).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR,null);
                     }
                 });
             }
         };
         timer.scheduleAtFixedRate(fetchTimerTask, START_IMMEDIATELY, PERIOD);
     }
-/*
-    private void startTimerTask2() {
-        final Handler handler = new Handler();
-        Timer timer = new Timer();
-        TimerTask fetchTimerTask = new TimerTask() {
-            @Override
-            public void run() {
-                handler.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        //new FetchDataTask().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR,null);
-                        new AsyncTask<Void,Void,Void>(){
-
-                            @Override
-                            protected Void doInBackground(Void... params) {
-                                String result;
-                                try {
-                                    result = openWeatherMapFetcher.getWeatherForCityByCityId(2840270);
-                                } catch (IOException e) {
-                                    e.printStackTrace();
-                                }
-                                return null;
-                            }
-                        }.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, null);
-                    }
-                });
-            }
-        };
-        timer.scheduleAtFixedRate(fetchTimerTask, 0, PERIOD);
-    }
-
-    private void startTimerTask3() {
-        final Handler handler = new Handler();
-        Timer timer = new Timer();
-        TimerTask fetchTimerTask = new TimerTask() {
-            @Override
-            public void run() {
-                handler.post(new Runnable() {
-                    @Override
-                    public void run() {
-                      //  new FetchDataTask().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR,null);
-                        AsyncTask test = new AsyncTask<Void,Void,Void>(){
-
-                            @Override
-                            protected Void doInBackground(Void... params) {
-                                String result;
-                                try {
-                                    result = openWeatherMapFetcher.getWeatherForCityByCityId(3247901);
-                                    Log.i(this.getClass().getName(),"Fetched data: " + result);
-                                } catch (IOException e) {
-                                    Log.e(MainActivity.class.getName(),"IO exception why fetching the data", e);
-                                    e.printStackTrace();
-                                }
-                                return null;
-                            }
-                        };
-                        test.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR,null);
-                    }
-                });
-            }
-        };
-        timer.scheduleAtFixedRate(fetchTimerTask, 0, PERIOD);
-    }
-*/
-    /*
-    private class FetchDataTask extends AsyncTask<Void,Void,Void>
-    {
-
-        @Override
-        protected Void doInBackground(Void... params) {
-            JSONObject result = null;
-            result = openWeatherMapFetcher.getWeatherByLocationId(2648110);
-            Log.i(this.getClass().getName(),"Fetched data: " + result);
-            result = openWeatherMapFetcher.getWeatherByLocationName("Greater London","GB");
-            Log.i(this.getClass().getName(),"Fetched data: " + result);
-            result = openWeatherMapFetcher.getWeatherByLocationCoordinates(-0.16667,51.5);
-            Log.i(this.getClass().getName(),"Fetched data: " + result);
-            return null;
-        }
-    }
-    */
 
 }

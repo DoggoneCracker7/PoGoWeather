@@ -14,11 +14,11 @@ import java.io.IOException;
  * Created by kbaran on 07.12.16.
  */
 
-public class FetchDataAsyncTask extends AsyncTask<Void,Void,Void> {
+public class FetchWeatherDataAsyncTask extends AsyncTask<Void,Void,Void> {
 
     private OpenWeatherMapFetcher openWeatherMapFetcher;
 
-    public FetchDataAsyncTask(OpenWeatherMapFetcher openWeatherMapFetcher) {
+    public FetchWeatherDataAsyncTask(OpenWeatherMapFetcher openWeatherMapFetcher) {
         this.openWeatherMapFetcher = openWeatherMapFetcher;
     }
 
