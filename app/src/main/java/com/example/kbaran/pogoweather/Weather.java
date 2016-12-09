@@ -3,7 +3,7 @@ package com.example.kbaran.pogoweather;
 
 import java.util.Date;
 
-public class Weather {
+public class Weather extends ModelBase {
     private float temp;
     private float tempMin;
     private float tempMax;

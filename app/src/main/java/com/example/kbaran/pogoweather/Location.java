@@ -3,7 +3,7 @@ package com.example.kbaran.pogoweather;
 
 import java.util.Set;
 
-public class Location {
+public class Location extends ModelBase {
     private String cityName;
     private float cityCoordLatitude;
     private float cityCoordLongitude;
