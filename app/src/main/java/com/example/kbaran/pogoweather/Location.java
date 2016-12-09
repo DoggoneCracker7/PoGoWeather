@@ -12,7 +12,7 @@ public class Location extends ModelBase {
 
     public Location(){}
 
-    public Location(String cityName, int cityCoordLatitude, int cityCoordLongitude, String cityCountry){
+    public Location(String cityName, float cityCoordLatitude, float cityCoordLongitude, String cityCountry){
         this.cityName = cityName;
         this.cityCoordLatitude = cityCoordLatitude;
         this.cityCoordLongitude = cityCoordLongitude;

@@ -9,7 +9,7 @@ public final class LocationWeatherTable {
     public static class LocationWeatherColumns {
         public static final String LOCATION_ID = "location_id";
         public static final String WEATHER_ID = "weather_id";
-        public static final String DATE = "date";
+        //public static final String DATE = "date";
     }
     public static void onCreate(SQLiteDatabase db) {
         StringBuilder sb = new StringBuilder();
@@ -17,7 +17,7 @@ public final class LocationWeatherTable {
         ;
         sb.append(LocationWeatherColumns.LOCATION_ID + " INTEGER NOT NULL, ");
         sb.append(LocationWeatherColumns.WEATHER_ID + " INTEGER NOT NULL, ");
-        sb.append(LocationWeatherColumns.DATE + " TEXT, ");
+        //sb.append(LocationWeatherColumns.DATE + " TEXT, ");
         sb.append("FOREIGN KEY(" + LocationWeatherColumns.LOCATION_ID + ")" +
                 " REFERENCES " + LocationTable.TABLE_NAME + "("
                 + BaseColumns._ID + "), ");
