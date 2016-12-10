@@ -1,10 +1,13 @@
-package com.example.kbaran.pogoweather;
+package com.example.kbaran.pogoweather.LocationWeather;
 
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteStatement;
 import android.provider.BaseColumns;
-import com.example.kbaran.pogoweather.LocationWeatherTable.LocationWeatherColumns;
+
+import com.example.kbaran.pogoweather.LocationWeather.LocationWeatherTable.LocationWeatherColumns;
+import com.example.kbaran.pogoweather.Weather.Weather;
+import com.example.kbaran.pogoweather.Weather.WeatherTable;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -13,7 +16,7 @@ import java.util.List;
 public class LocationWeatherDao {
     private static final String INSERT =
             "insert into " + LocationWeatherTable.TABLE_NAME
-                    + "(" + LocationWeatherColumns.LOCATION_ID + ", " + LocationWeatherColumns.WEATHER_ID +")"+
+                    + "(" + LocationWeatherColumns.LOCATION_ID + ", " + LocationWeatherColumns.WEATHER_ID + ")"+
                     "values (?, ?)";
     private SQLiteDatabase db;
     private SQLiteStatement insertStatement;
@@ -24,14 +27,14 @@ public class LocationWeatherDao {
 
     public List<Weather> getWeathers(long id) {
         List<Weather> list = new ArrayList<Weather>();
-        Cursor c = db.query(LocationWeatherTable.TABLE_NAME, new String[] {LocationWeatherTable.LocationWeatherColumns.LOCATION_ID},
-                "location_id = ?", new String[]{  String.valueOf(id) }, null, null, LocationWeatherTable.LocationWeatherColumns.LOCATION_ID, null);
+        Cursor c = db.query(LocationWeatherTable.TABLE_NAME, new String[] {LocationWeatherTable.LocationWeatherColumns.WEATHER_ID},
+                "location_id = ?", new String[]{  String.valueOf(id) }, null, null, LocationWeatherTable.LocationWeatherColumns.WEATHER_ID, null);
 
         if (c.moveToFirst()) {
             do {
-                Weather group = this.buildWeatherFromCursor(c);
-                if (group != null) {
-                    list.add(group);
+                Weather weather = this.buildWeatherFromCursor(c);
+                if (weather != null) {
+                    list.add(weather);
                 }
             } while (c.moveToNext());
         }
@@ -41,10 +44,10 @@ public class LocationWeatherDao {
         return list;
     }
     private Weather buildWeatherFromCursor(Cursor c) {
-        Weather location = null;
+        Weather weather = null;
         if (c != null) {
             Cursor c1 =
-                    db.query(WeatherTable.TABLE_NAME, 
+                    db.query(WeatherTable.TABLE_NAME,
                                     new String[] {
                                             BaseColumns._ID, WeatherTable.WeatherColumns.TEMP, WeatherTable.WeatherColumns.TEMP_MIN, WeatherTable.WeatherColumns.TEMP_MAX,
                                             WeatherTable.WeatherColumns.CLOUDS, WeatherTable.WeatherColumns.RAIN, WeatherTable.WeatherColumns.SNOW,
@@ -52,23 +55,13 @@ public class LocationWeatherDao {
                                             WeatherTable.WeatherColumns.CALCTIME,
                                     },
                             "_id = ?", new String[]{  String.valueOf(c.getLong(0)) }, null, null, null, "1");
-
-            if (c1.moveToFirst()) {
-                System.out.println(c1.getLong(0));
-                if (c1 != null) {
-                    location = new Weather();
-                    location.setId(c.getLong(0));
-                    location.setTemp(Float.parseFloat(c.getString(1)));
-                    location.setTempMin(Float.parseFloat(c.getString(2)));
-                    location.setTempMax(Float.parseFloat(c.getString(3)));
-                    location.setClouds(Float.parseFloat(c.getString(4)));
-                    location.setRain(c.getInt(5));
-                    location.setSnow(c.getInt(6));
-                    location.setWind(c.getInt(7));
-                    location.setPressure(c.getInt(8));
-                    location.setHumidity(c.getLong(9));
+            if (c1.getCount() != 0) {
+                if (c1.moveToFirst()) {
                     try {
-                        location.setCalcTime(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", java.util.Locale.getDefault()).parse(c.getString(10)));
+                        weather = new Weather.Builder().temp(Float.parseFloat(c1.getString(1))).tempMin(Float.parseFloat(c1.getString(2))).tempMax(Float.parseFloat(c1.getString(3)))
+                                .clouds(Float.parseFloat(c1.getString(4))).rain(c1.getInt(5)).snow(c1.getInt(6)).wind(c1.getInt(7)).pressure(c1.getInt(8)).humidity(Float.parseFloat(c1.getString(9)))
+                                .calcTime(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", java.util.Locale.getDefault()).parse(c1.getString(10))).build();
+                        weather.setId(c1.getLong(0));
                     } catch (java.text.ParseException e){
                         e.printStackTrace();
                     }
@@ -78,17 +71,18 @@ public class LocationWeatherDao {
                 c1.close();
             }
         }
-        return location;
+        return weather;
     }
 
     public long save(LocationWeatherKey entity) {
-        if(exists(entity)) {
+        if(!exists(entity)) {
             insertStatement.clearBindings();
             insertStatement.bindLong(1, entity.getLocationId());
             insertStatement.bindLong(2, entity.getWeatherId());
             return insertStatement.executeInsert();
+        }else{
+            return 0;
         }
-        return 0;
     }
 
     public boolean exists(LocationWeatherKey entity) {
@@ -97,11 +91,8 @@ public class LocationWeatherDao {
         Cursor c =
                 db.query(LocationWeatherTable.TABLE_NAME, new String[] {LocationWeatherTable.LocationWeatherColumns.LOCATION_ID, LocationWeatherTable.LocationWeatherColumns.WEATHER_ID},
                         "weather_id = ? and location_id = ?", new String[]{  String.valueOf(entity.getWeatherId()), String.valueOf(entity.getLocationId()) }, null, null, null, null);
-
-        if (c.moveToFirst()) {
-            if (c != null) {
-                result = true;
-            }
+        if (c.getCount() != 0) {
+            result = true;
         }
         if (!c.isClosed()) {
             c.close();
@@ -110,16 +101,14 @@ public class LocationWeatherDao {
     }
 
     public void delete(LocationWeatherKey entity) {
-
         Cursor c =
                 db.query(LocationWeatherTable.TABLE_NAME, new String[] {LocationWeatherTable.LocationWeatherColumns.LOCATION_ID, LocationWeatherTable.LocationWeatherColumns.WEATHER_ID},
                         "weather_id = ? and location_id = ?", new String[]{  String.valueOf(entity.getWeatherId()), String.valueOf(entity.getLocationId()) }, null, null, null, null);
 
-
-        if (c.moveToFirst()) {
-            if (c != null) {
+        if (c.getCount() != 0) {
+            if (c.moveToFirst()) {
                 db.delete(LocationWeatherTable.TABLE_NAME,
-                        "weather_id = ? and location_id = ?", new String[]{  String.valueOf(entity.getWeatherId()), String.valueOf(entity.getLocationId()) });
+                        "weather_id = ? and location_id = ?", new String[]{String.valueOf(entity.getWeatherId()), String.valueOf(entity.getLocationId())});
             }
         }
         if (!c.isClosed()) {

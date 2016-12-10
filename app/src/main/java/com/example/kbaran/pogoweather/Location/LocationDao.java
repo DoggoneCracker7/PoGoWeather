@@ -1,11 +1,13 @@
-package com.example.kbaran.pogoweather;
+package com.example.kbaran.pogoweather.Location;
 
 import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteStatement;
 import android.provider.BaseColumns;
-import com.example.kbaran.pogoweather.LocationTable.LocationColumns;
+
+import com.example.kbaran.pogoweather.Dao;
+import com.example.kbaran.pogoweather.Location.LocationTable.LocationColumns;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -28,7 +30,7 @@ public class LocationDao implements Dao<Location> {
     public long save(Location entity) {
         insertStatement.clearBindings();
         insertStatement.bindString(1, entity.getCityName());
-        insertStatement.bindString(2, entity.getCityName());
+        insertStatement.bindString(2, entity.getCityCountry());
         insertStatement.bindDouble(3, entity.getCityCoordLatitude());
         insertStatement.bindDouble(4, entity.getCityCoordLongitude());
         return insertStatement.executeInsert();
@@ -94,12 +96,8 @@ public class LocationDao implements Dao<Location> {
     private Location buildLocationFromCursor(Cursor c) {
         Location location = null;
         if (c != null) {
-            location = new Location();
+            location = new Location.Builder().cityName(c.getString(1)).cityCountry(c.getString(2)).cityCoordLatitude(Float.parseFloat(c.getString(3))).cityCoordLongitude(Float.parseFloat(c.getString(4))).build();
             location.setId(c.getLong(0));
-            location.setCityName(c.getString(1));
-            location.setCityCountry(c.getString(2));
-            location.setCityCoordLatitude(Float.parseFloat(c.getString(3)));
-            location.setCityCoordLongitude(Float.parseFloat(c.getString(4)));
         }
         return location;
     }

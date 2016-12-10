@@ -5,6 +5,21 @@ import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
+import com.example.kbaran.pogoweather.City.City;
+import com.example.kbaran.pogoweather.City.CityDao;
+import com.example.kbaran.pogoweather.City.CityTable;
+import com.example.kbaran.pogoweather.Location.Location;
+import com.example.kbaran.pogoweather.Location.LocationDao;
+import com.example.kbaran.pogoweather.Location.LocationTable;
+import com.example.kbaran.pogoweather.LocationWeather.LocationWeatherDao;
+import com.example.kbaran.pogoweather.LocationWeather.LocationWeatherKey;
+import com.example.kbaran.pogoweather.LocationWeather.LocationWeatherTable;
+import com.example.kbaran.pogoweather.Weather.Weather;
+import com.example.kbaran.pogoweather.Weather.WeatherDao;
+import com.example.kbaran.pogoweather.Weather.WeatherTable;
+
+import java.util.Date;
+
 public class OpenHelper extends SQLiteOpenHelper {
     private Context context;
     private static final String DATABASE_NAME = "baza.db";

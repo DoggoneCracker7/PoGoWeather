@@ -7,6 +7,15 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
+import com.example.kbaran.pogoweather.City.City;
+import com.example.kbaran.pogoweather.City.CityDao;
+import com.example.kbaran.pogoweather.Location.Location;
+import com.example.kbaran.pogoweather.Location.LocationDao;
+import com.example.kbaran.pogoweather.LocationWeather.LocationWeatherDao;
+import com.example.kbaran.pogoweather.LocationWeather.LocationWeatherKey;
+import com.example.kbaran.pogoweather.Weather.Weather;
+import com.example.kbaran.pogoweather.Weather.WeatherDao;
+
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -73,7 +82,7 @@ public class DataManagerImpl implements DataManager {
                         weatherId = dbWeather.getId();
                     }
                     LocationWeatherKey mcKey =
-                            new LocationWeatherKey(locationId, weatherId);
+                            new LocationWeatherKey.Builder().locationId(locationId).weatherId(weatherId).build();
                     if (!locationWeatherDao.exists(mcKey)) {
                         locationWeatherDao.save(mcKey);
                     }
@@ -99,7 +108,7 @@ public class DataManagerImpl implements DataManager {
                 if(location.getWeather() != null) {
                     for (Weather c : location.getWeather()) {
                         locationWeatherDao.delete(
-                                new LocationWeatherKey(location.getId(), c.getId()));
+                                new LocationWeatherKey.Builder().locationId(location.getId()).weatherId(c.getId()).build());
                     }
                 }
                 locationDao.delete(location);

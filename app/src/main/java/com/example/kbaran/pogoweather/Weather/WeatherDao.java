@@ -1,4 +1,4 @@
-package com.example.kbaran.pogoweather;
+package com.example.kbaran.pogoweather.Weather;
 
 
 import android.content.ContentValues;
@@ -6,7 +6,9 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteStatement;
 import android.provider.BaseColumns;
-import com.example.kbaran.pogoweather.WeatherTable.WeatherColumns;
+
+import com.example.kbaran.pogoweather.Dao;
+import com.example.kbaran.pogoweather.Weather.WeatherTable.WeatherColumns;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -40,7 +42,11 @@ public class WeatherDao implements Dao<Weather> {
         insertStatement.bindLong(7, entity.getWind());
         insertStatement.bindLong(8, entity.getPressure());
         insertStatement.bindDouble(9, entity.getHumidity());
-        insertStatement.bindString(10, new SimpleDateFormat("yyyy-MM-dd HH:mm:ss",java.util.Locale.getDefault()).format(entity.getCalcTime()));
+        try{
+            insertStatement.bindString(10, new SimpleDateFormat("yyyy-MM-dd HH:mm:ss",java.util.Locale.getDefault()).format(entity.getCalcTime()));
+        }catch (NullPointerException ex){
+            ex.printStackTrace();
+        }
         return insertStatement.executeInsert();
     }
     public void update(Weather entity) {
@@ -69,7 +75,7 @@ public class WeatherDao implements Dao<Weather> {
     }
     @Override
     public Weather get(long id) {
-        Weather location = null;
+        Weather weather = null;
         Cursor c =
                 db.query(WeatherTable.TABLE_NAME,
                         new String[] {
@@ -81,12 +87,12 @@ public class WeatherDao implements Dao<Weather> {
                         BaseColumns._ID + " = ?", new String[] { String.valueOf(id) },
                         null, null, null, "1");
         if (c.moveToFirst()) {
-            location = this.buildWeatherFromCursor(c);
+            weather = this.buildWeatherFromCursor(c);
         }
         if (!c.isClosed()) {
             c.close();
         }
-        return location;
+        return weather;
     }
     @Override
     public List<Weather> getAll() {
@@ -102,9 +108,9 @@ public class WeatherDao implements Dao<Weather> {
                         null, null, null, null, BaseColumns._ID, null);
         if (c.moveToFirst()) {
             do {
-                Weather location = this.buildWeatherFromCursor(c);
-                if (location != null) {
-                    list.add(location);
+                Weather weather = this.buildWeatherFromCursor(c);
+                if (weather != null) {
+                    list.add(weather);
                 }
             } while (c.moveToNext());
         }
@@ -114,25 +120,17 @@ public class WeatherDao implements Dao<Weather> {
         return list;
     }
     private Weather buildWeatherFromCursor(Cursor c) {
-        Weather location = null;
+        Weather weather = null;
         if (c != null) {
-            location = new Weather();
-            location.setId(c.getLong(0));
-            location.setTemp(Float.parseFloat(c.getString(1)));
-            location.setTempMin(Float.parseFloat(c.getString(2)));
-            location.setTempMax(Float.parseFloat(c.getString(3)));
-            location.setClouds(Float.parseFloat(c.getString(4)));
-            location.setRain(c.getInt(5));
-            location.setSnow(c.getInt(6));
-            location.setWind(c.getInt(7));
-            location.setPressure(c.getInt(8));
-            location.setHumidity(c.getLong(9));
             try {
-                location.setCalcTime(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", java.util.Locale.getDefault()).parse(c.getString(10)));
+                weather = new Weather.Builder().temp(Float.parseFloat(c.getString(1))).tempMin(Float.parseFloat(c.getString(2))).tempMax(Float.parseFloat(c.getString(3)))
+                        .clouds(Float.parseFloat(c.getString(4))).rain(c.getInt(5)).snow(c.getInt(6)).wind(c.getInt(7)).pressure(c.getInt(8)).humidity(Float.parseFloat(c.getString(9)))
+                        .calcTime(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", java.util.Locale.getDefault()).parse(c.getString(10))).build();
+                weather.setId(c.getLong(0));
             } catch (java.text.ParseException e){
                 e.printStackTrace();
             }
         }
-        return location;
+        return weather;
     }
 }

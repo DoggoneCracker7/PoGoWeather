@@ -1,4 +1,4 @@
-package com.example.kbaran.pogoweather;
+package com.example.kbaran.pogoweather.Weather;
 
 import android.database.sqlite.SQLiteDatabase;
 import android.provider.BaseColumns;

@@ -1,6 +1,11 @@
 package com.example.kbaran.pogoweather;
 
 
+import com.example.kbaran.pogoweather.City.City;
+import com.example.kbaran.pogoweather.Location.Location;
+import com.example.kbaran.pogoweather.LocationWeather.LocationWeatherKey;
+import com.example.kbaran.pogoweather.Weather.Weather;
+
 import java.util.List;
 
 public interface DataManager {
@@ -13,8 +18,8 @@ public interface DataManager {
     public List<Weather> getAllWeathers();
     public long saveWeather(Weather weather);
     public void deleteWeather(Weather weather);
-    public long saveLocationWeather(LocationWeatherKey locationGroup);
     public List<Weather> getLocationWeathers(long id);
+    public long saveLocationWeather(LocationWeatherKey locationGroup);
     public City getCity(long cityId);
     public List<City> getAllCities();
     public long saveCity(City city);
